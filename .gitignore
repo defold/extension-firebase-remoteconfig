@@ -1,0 +1,16 @@
+
+.externalToolBuilders
+.DS_Store
+.lock-wscript
+build
+*.pyc
+.project
+.cproject
+builtins
+.internal
+.clang_complete
+google-services.json
+google-services.xml
+dependencies.json
+GoogleService-Info.plist
+Info.plist

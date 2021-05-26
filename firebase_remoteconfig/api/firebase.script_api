@@ -5,8 +5,7 @@
   members:
   - name: remoteconfig.init
     type: function
-    desc: Initialise Firebase Remote Config.
-          Generates CONFIG_INITIALIZE or CONFIG_ERROR
+    desc: Initialise Firebase Remote Config. Generates CONFIG_INITIALIZE or CONFIG_ERROR
 
     parameters:
     - name: callback
@@ -15,18 +14,15 @@
 
   - name: remoteconfig.fetch
     type: function
-    desc: Fetches config data from the server. (Official docs https://firebase.google.com/docs/reference/cpp/class/firebase/remote-config/remote-config#fetch)
-          Generates CONFIG_FETCHED or CONFIG_ERROR
+    desc: Fetches config data from the server. (Official docs https://firebase.google.com/docs/reference/cpp/class/firebase/remote-config/remote-config#fetch). Generates CONFIG_FETCHED or CONFIG_ERROR
 
   - name: remoteconfig.activate
     type: function
-    desc: Asynchronously activates the most recently fetched configs, so that the fetched key value pairs take effect. (Official docs https://firebase.google.com/docs/reference/cpp/class/firebase/remote-config/remote-config#activate)
-          Generates CONFIG_ACTIVATED or CONFIG_ERROR
+    desc: Asynchronously activates the most recently fetched configs, so that the fetched key value pairs take effect. (Official docs https://firebase.google.com/docs/reference/cpp/class/firebase/remote-config/remote-config#activate). Generates CONFIG_ACTIVATED or CONFIG_ERROR
 
   - name: remoteconfig.fetch_and_activate
     type: function
-    desc: Asynchronously fetches and then activates the fetched configs. (Official docs https://firebase.google.com/docs/reference/cpp/class/firebase/remote-config/remote-config#fetchandactivate)
-          Generates CONFIG_FETCHED and CONFIG_ACTIVATED or CONFIG_ERROR
+    desc: Asynchronously fetches and then activates the fetched configs. (Official docs https://firebase.google.com/docs/reference/cpp/class/firebase/remote-config/remote-config#fetchandactivate). Generates CONFIG_FETCHED and CONFIG_ACTIVATED or CONFIG_ERROR
 
   - name: remoteconfig.get_boolean
     type: function
@@ -91,8 +87,7 @@
     parameters:
     - name: defaults
       type: table
-      desc: Key-value pairs representing the default values
-      Generates CONFIG_DEFAULTS_SET or CONFIG_ERROR
+      desc: Key-value pairs representing the default values. Generates CONFIG_DEFAULTS_SET or CONFIG_ERROR
 
   - name: remoteconfig.CONFIG_INITIALIZED
     type: number

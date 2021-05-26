@@ -20,7 +20,7 @@ static dmScript::LuaCallbackInfo* g_FirebaseRemoteConfigCallback;
 static dmArray<FirebaseRemoteConfigEvent> g_FirebaseRemoteConfigEvents;
 static dmMutex::HMutex g_FirebaseRemoteConfigEventsMutex;
 
-
+// queue a remote config event for later processing (from the main thread)
 static void FirebaseRemoteConfig_QueueEvent(FirebaseRemoteConfigEvent event)
 {
 	DM_MUTEX_SCOPED_LOCK(g_FirebaseRemoteConfigEventsMutex);
@@ -31,6 +31,9 @@ static void FirebaseRemoteConfig_QueueEvent(FirebaseRemoteConfigEvent event)
 	g_FirebaseRemoteConfigEvents.Push(event);
 }
 
+// process any queued events
+// this will invoke the callback set when remote config was initialised
+// called automatically from extension update function
 static void FirebaseRemoteConfig_ProcessEvents()
 {
 	if (g_FirebaseRemoteConfigEvents.Empty())
@@ -40,7 +43,7 @@ static void FirebaseRemoteConfig_ProcessEvents()
 
 	if (!dmScript::IsCallbackValid(g_FirebaseRemoteConfigCallback))
 	{
-		dmLogInfo("RemoteConfig callback is not valid");
+		dmLogWarning("RemoteConfig callback is not valid");
 		return;
 	}
 
@@ -61,6 +64,7 @@ static void FirebaseRemoteConfig_ProcessEvents()
 	g_FirebaseRemoteConfigEvents.SetSize(0);
 }
 
+// get the remote config instance for this app
 static RemoteConfig* FirebaseRemoteConfig_GetInstance()
 {
 	firebase::App* app = Firebase_GetFirebaseApp();
@@ -69,16 +73,12 @@ static RemoteConfig* FirebaseRemoteConfig_GetInstance()
 
 static int FirebaseRemoteConfig_Init(lua_State* L) {
 	DM_LUA_STACK_CHECK(L, 0);
-	dmLogInfo("FirebaseRemoteConfig_Init");
 	g_FirebaseRemoteConfigCallback = dmScript::CreateCallback(L, 1);
 
 	FirebaseRemoteConfig_GetInstance()->EnsureInitialized()
 	.OnCompletion([](const ::firebase::Future<ConfigInfo>& completed_future){
-		dmLogInfo("EnsureInitialized");
 		if (completed_future.error() == 0)
 		{
-			const ConfigInfo *info = completed_future.result();
-			// check info.last_fetch_status ?
 			FirebaseRemoteConfig_QueueEvent(CONFIG_INITIALIZED);
 		}
 		else
@@ -92,7 +92,6 @@ static int FirebaseRemoteConfig_Init(lua_State* L) {
 
 static int FirebaseRemoteConfig_Fetch(lua_State* L) {
 	DM_LUA_STACK_CHECK(L, 0);
-	dmLogInfo("FirebaseRemoteConfig_Fetch");
 	FirebaseRemoteConfig_GetInstance()->Fetch()
 	.OnCompletion([](const ::firebase::Future<void>& completed_future){
 		if (completed_future.error() == 0)
@@ -107,9 +106,9 @@ static int FirebaseRemoteConfig_Fetch(lua_State* L) {
 	});
 	return 0;
 }
+
 static int FirebaseRemoteConfig_Activate(lua_State* L) {
 	DM_LUA_STACK_CHECK(L, 0);
-	dmLogInfo("FirebaseRemoteConfig_Activate");
 	FirebaseRemoteConfig_GetInstance()->Activate()
 	.OnCompletion([](const ::firebase::Future<bool>& completed_future){
 		if (completed_future.error() == 0)
@@ -124,9 +123,9 @@ static int FirebaseRemoteConfig_Activate(lua_State* L) {
 	});
 	return 0;
 }
+
 static int FirebaseRemoteConfig_FetchAndActivate(lua_State* L) {
 	DM_LUA_STACK_CHECK(L, 0);
-	dmLogInfo("FirebaseRemoteConfig_FetchAndActivate");
 	FirebaseRemoteConfig_GetInstance()->FetchAndActivate()
 	.OnCompletion([](const ::firebase::Future<bool>& completed_future){
 		if (completed_future.error() == 0)
@@ -145,7 +144,6 @@ static int FirebaseRemoteConfig_FetchAndActivate(lua_State* L) {
 
 static int FirebaseRemoteConfig_GetBoolean(lua_State* L) {
 	DM_LUA_STACK_CHECK(L, 1);
-	dmLogInfo("FirebaseRemoteConfig_GetBoolean");
 	const char* key = luaL_checkstring(L, 1);
 	bool value = FirebaseRemoteConfig_GetInstance()->GetBoolean(key);
 	lua_pushboolean(L, value);
@@ -154,7 +152,6 @@ static int FirebaseRemoteConfig_GetBoolean(lua_State* L) {
 
 static int FirebaseRemoteConfig_GetData(lua_State* L) {
 	DM_LUA_STACK_CHECK(L, 1);
-	dmLogInfo("FirebaseRemoteConfig_GetData");
 	const char* key = luaL_checkstring(L, 1);
 	std::vector<unsigned char> value = FirebaseRemoteConfig_GetInstance()->GetData(key);
 	lua_pushstring(L, (char*)value.data());
@@ -163,7 +160,6 @@ static int FirebaseRemoteConfig_GetData(lua_State* L) {
 
 static int FirebaseRemoteConfig_GetNumber(lua_State* L) {
 	DM_LUA_STACK_CHECK(L, 1);
-	dmLogInfo("FirebaseRemoteConfig_GetNumber");
 	const char* key = luaL_checkstring(L, 1);
 	double value = FirebaseRemoteConfig_GetInstance()->GetDouble(key);
 	lua_pushnumber(L, value);
@@ -172,7 +168,6 @@ static int FirebaseRemoteConfig_GetNumber(lua_State* L) {
 
 static int FirebaseRemoteConfig_GetString(lua_State* L) {
 	DM_LUA_STACK_CHECK(L, 1);
-	dmLogInfo("FirebaseRemoteConfig_GetString");
 	const char* key = luaL_checkstring(L, 1);
 	const char* value = FirebaseRemoteConfig_GetInstance()->GetString(key).c_str();
 	lua_pushstring(L, value);
@@ -227,7 +222,7 @@ static int FirebaseRemoteConfig_SetDefaults(lua_State* L) {
 		}
 		else
 		{
-			dmLogInfo("RemoteConfig %d %s", completed_future.error(), completed_future.error_message());
+			dmLogError("RemoteConfig %d %s", completed_future.error(), completed_future.error_message());
 			FirebaseRemoteConfig_QueueEvent(CONFIG_ERROR);
 		}
 	});

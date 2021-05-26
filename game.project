@@ -23,12 +23,12 @@ shared_state = 1
 include_dirs = firebase_remoteconfig
 
 [ios]
-bundle_identifier = com.defold.firebase.remoteconfig
+bundle_identifier = com.defold.firebase
 infoplist = /builtins/manifests/ios/Info.plist
 
 [android]
-package = com.defold.firebase.remoteconfig
+package = com.defold.firebase
 
 [osx]
-bundle_identifier = com.defold.firebase.remoteconfig
+bundle_identifier = com.defold.firebase
 

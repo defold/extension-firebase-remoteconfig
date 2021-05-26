@@ -1,106 +1,115 @@
-- name: firebase.analytics
+- name: remoteconfig
   type: table
-  desc: Functions and constants for interacting with Firebase
+  desc: Functions and constants for interacting with Firebase Remote Config
 
   members:
-  - name: analytics.log_string
+  - name: remoteconfig.init
     type: function
-    desc: Log an event with one string parameter. (Official docs https://firebase.google.com/docs/reference/cpp/namespace/firebase/analytics#logevent)
+    desc: Initialise Firebase Remote Config.
+          Generates CONFIG_INITIALIZE or CONFIG_ERROR
 
     parameters:
-    - name: name
-      type: string
-      desc: Event name
-    - name: parameter_name
-      type: string
-      desc: Parameter name
-    - name: parameter_value
-      type: string
-      desc: Parameter value
+    - name: callback
+      type: function
+      desc: Function to call when a remote config event has happened
 
-  - name: analytics.log_int
+  - name: remoteconfig.fetch
     type: function
-    desc: Log an event with one integer parameter. (Official docs https://firebase.google.com/docs/reference/cpp/namespace/firebase/analytics#logevent_4)
+    desc: Fetches config data from the server. (Official docs https://firebase.google.com/docs/reference/cpp/class/firebase/remote-config/remote-config#fetch)
+          Generates CONFIG_FETCHED or CONFIG_ERROR
+
+  - name: remoteconfig.activate
+    type: function
+    desc: Asynchronously activates the most recently fetched configs, so that the fetched key value pairs take effect. (Official docs https://firebase.google.com/docs/reference/cpp/class/firebase/remote-config/remote-config#activate)
+          Generates CONFIG_ACTIVATED or CONFIG_ERROR
+
+  - name: remoteconfig.fetch_and_activate
+    type: function
+    desc: Asynchronously fetches and then activates the fetched configs. (Official docs https://firebase.google.com/docs/reference/cpp/class/firebase/remote-config/remote-config#fetchandactivate)
+          Generates CONFIG_FETCHED and CONFIG_ACTIVATED or CONFIG_ERROR
+
+  - name: remoteconfig.get_boolean
+    type: function
+    desc: Returns the value associated with a key, converted to a bool. (Official docs https://firebase.google.com/docs/reference/cpp/class/firebase/remote-config/remote-config#getboolean)
 
     parameters:
-    - name: name
+    - name: key
       type: string
-      desc: Event name
-    - name: parameter_name
-      type: string
-      desc: Parameter name
-    - name: parameter_value
-      type: number
-      desc: Parameter value
-
-  - name: analytics.log_number
-    type: function
-    desc: Log an event with one float parameter. (Official docs https://firebase.google.com/docs/reference/cpp/namespace/firebase/analytics#logevent_2)
-
-    parameters:
-    - name: name
-      type: string
-      desc: Event name
-    - name: parameter_name
-      type: string
-      desc: Parameter name
-    - name: parameter_value
-      type: number
-      desc: Parameter value
-
-  - name: analytics.log_table
-    type: function
-    desc: Log an event with table parameters. (Official docs https://firebase.google.com/docs/reference/cpp/namespace/firebase/analytics#logevent_6)
-
-    parameters:
-    - name: name
-      type: string
-      desc: Event name
-    - name: parameters_table
-      type: table
-      desc: Table with parameters (key-value pairs)
-
-  - name: analytics.set_screen
-    type: function
-    desc: Sets the current screen name and screen class, which specifies the current visual context in your app. (Official docs https://firebase.google.com/docs/reference/cpp/namespace/firebase/analytics#setcurrentscreen)
-
-    parameters:
-    - name: screen_name
-      type: string
-      desc: Screen name
-    - name: screen_name
-      type: string
-      desc: Screen class
-
-  - name: analytics.set_user_id
-    type: function
-    desc: Sets the user ID property. (Official docs https://firebase.google.com/docs/reference/cpp/namespace/firebase/analytics#setuserid)
-
-    parameters:
-    - name: user_id
-      type: string
-      desc: User ID property
-
-  - name: analytics.set_user_property
-    type: function
-    desc: Set a user property to the given value. (Official docs https://firebase.google.com/docs/reference/cpp/namespace/firebase/analytics#setuserproperty)
-
-    parameters:
-    - name: name
-      type: string
-      desc: User property name
-    - name: property
-      type: string
-      desc: User property value
-
-  - name: analytics.reset
-    type: function
-    desc: Clears all analytics data for this app from the device and resets the app instance id. (Official docs https://firebase.google.com/docs/reference/cpp/namespace/firebase/analytics#resetanalyticsdata)
-
-  - name: analytics.get_id
-    type: function
-    desc: Get the instance ID from the analytics service. (Official docs https://firebase.google.com/docs/reference/cpp/namespace/firebase/analytics#getanalyticsinstanceid)
+      desc: Key of the value to be retrieved
 
     return:
-    - name: Instance ID
+    - name: value
+      type: boolean
+      desc: The value
+
+  - name: remoteconfig.get_data
+    type: function
+    desc: Returns the value associated with a key, as a vector of raw byte-data. (Official docs https://firebase.google.com/docs/reference/cpp/class/firebase/remote-config/remote-config#getdata)
+
+    parameters:
+    - name: key
       type: string
+      desc: Key of the value to be retrieved
+
+    return:
+    - name: value
+      type: string
+      desc: The value
+
+  - name: remoteconfig.get_number
+    type: function
+    desc: Returns the value associated with a key, converted to a double. (Official docs https://firebase.google.com/docs/reference/cpp/class/firebase/remote-config/remote-config#getdouble)
+
+    parameters:
+    - name: key
+      type: string
+      desc: Key of the value to be retrieved
+
+    return:
+    - name: value
+      type: number
+      desc: The value
+
+  - name: remoteconfig.get_string
+    type: function
+    desc: Returns the value associated with a key, converted to a string. (Official docs https://firebase.google.com/docs/reference/cpp/class/firebase/remote-config/remote-config#getstring)
+
+    parameters:
+    - name: key
+      type: string
+      desc: Key of the value to be retrieved
+
+    return:
+    - name: value
+      type: string
+      desc: The value
+
+  - name: remoteconfig.set_defaults
+    type: function
+    desc: Sets the default values. (Official docs https://firebase.google.com/docs/reference/cpp/class/firebase/remote-config/remote-config#setdefaults)
+
+    parameters:
+    - name: defaults
+      type: table
+      desc: Key-value pairs representing the default values
+      Generates CONFIG_DEFAULTS_SET or CONFIG_ERROR
+
+  - name: remoteconfig.CONFIG_INITIALIZED
+    type: number
+    desc: Event generated when remote config has been initialized and is ready for use
+
+  - name: remoteconfig.CONFIG_ERROR
+    type: number
+    desc: Event generated when an error occurred.
+
+  - name: remoteconfig.CONFIG_DEFAULTS_SET
+    type: number
+    desc: Event generated when the default values have been set
+
+  - name: remoteconfig.CONFIG_FETCHED
+    type: number
+    desc: Event generated when the remote config has been fetched
+
+  - name: remoteconfig.CONFIG_ACTIVATED
+    type: number
+    desc: Event generated when the remote config has been activated

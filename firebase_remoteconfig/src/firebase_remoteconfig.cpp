@@ -19,6 +19,7 @@ using namespace firebase::remote_config;
 static dmScript::LuaCallbackInfo* g_FirebaseRemoteConfigCallback;
 static dmArray<FirebaseRemoteConfigEvent> g_FirebaseRemoteConfigEvents;
 static dmMutex::HMutex g_FirebaseRemoteConfigEventsMutex;
+static bool g_FirebaseRemoteConfig_Initialized = false;
 
 // queue a remote config event for later processing (from the main thread)
 static void FirebaseRemoteConfig_QueueEvent(FirebaseRemoteConfigEvent event)
@@ -79,6 +80,7 @@ static int FirebaseRemoteConfig_Init(lua_State* L) {
 	.OnCompletion([](const ::firebase::Future<ConfigInfo>& completed_future){
 		if (completed_future.error() == 0)
 		{
+			g_FirebaseRemoteConfig_Initialized = 1;
 			FirebaseRemoteConfig_QueueEvent(CONFIG_INITIALIZED);
 		}
 		else
@@ -92,6 +94,11 @@ static int FirebaseRemoteConfig_Init(lua_State* L) {
 
 static int FirebaseRemoteConfig_Fetch(lua_State* L) {
 	DM_LUA_STACK_CHECK(L, 0);
+	if (!g_FirebaseRemoteConfig_Initialized)
+	{
+		dmLogWarning("Firebase Remote Config has not been initialized! Make sure to call firebase.remoteconfig.init().");
+		return 0;
+	}
 	FirebaseRemoteConfig_GetInstance()->Fetch()
 	.OnCompletion([](const ::firebase::Future<void>& completed_future){
 		if (completed_future.error() == 0)
@@ -109,6 +116,11 @@ static int FirebaseRemoteConfig_Fetch(lua_State* L) {
 
 static int FirebaseRemoteConfig_Activate(lua_State* L) {
 	DM_LUA_STACK_CHECK(L, 0);
+	if (!g_FirebaseRemoteConfig_Initialized)
+	{
+		dmLogWarning("Firebase Remote Config has not been initialized! Make sure to call firebase.remoteconfig.init().");
+		return 0;
+	}
 	FirebaseRemoteConfig_GetInstance()->Activate()
 	.OnCompletion([](const ::firebase::Future<bool>& completed_future){
 		if (completed_future.error() == 0)
@@ -126,6 +138,11 @@ static int FirebaseRemoteConfig_Activate(lua_State* L) {
 
 static int FirebaseRemoteConfig_FetchAndActivate(lua_State* L) {
 	DM_LUA_STACK_CHECK(L, 0);
+	if (!g_FirebaseRemoteConfig_Initialized)
+	{
+		dmLogWarning("Firebase Remote Config has not been initialized! Make sure to call firebase.remoteconfig.init().");
+		return 0;
+	}
 	FirebaseRemoteConfig_GetInstance()->FetchAndActivate()
 	.OnCompletion([](const ::firebase::Future<bool>& completed_future){
 		if (completed_future.error() == 0)
@@ -144,6 +161,11 @@ static int FirebaseRemoteConfig_FetchAndActivate(lua_State* L) {
 
 static int FirebaseRemoteConfig_GetBoolean(lua_State* L) {
 	DM_LUA_STACK_CHECK(L, 1);
+	if (!g_FirebaseRemoteConfig_Initialized)
+	{
+		dmLogWarning("Firebase Remote Config has not been initialized! Make sure to call firebase.remoteconfig.init().");
+		return 0;
+	}
 	const char* key = luaL_checkstring(L, 1);
 	bool value = FirebaseRemoteConfig_GetInstance()->GetBoolean(key);
 	lua_pushboolean(L, value);
@@ -152,6 +174,11 @@ static int FirebaseRemoteConfig_GetBoolean(lua_State* L) {
 
 static int FirebaseRemoteConfig_GetData(lua_State* L) {
 	DM_LUA_STACK_CHECK(L, 1);
+	if (!g_FirebaseRemoteConfig_Initialized)
+	{
+		dmLogWarning("Firebase Remote Config has not been initialized! Make sure to call firebase.remoteconfig.init().");
+		return 0;
+	}
 	const char* key = luaL_checkstring(L, 1);
 	std::vector<unsigned char> value = FirebaseRemoteConfig_GetInstance()->GetData(key);
 	lua_pushstring(L, (char*)value.data());
@@ -160,6 +187,11 @@ static int FirebaseRemoteConfig_GetData(lua_State* L) {
 
 static int FirebaseRemoteConfig_GetNumber(lua_State* L) {
 	DM_LUA_STACK_CHECK(L, 1);
+	if (!g_FirebaseRemoteConfig_Initialized)
+	{
+		dmLogWarning("Firebase Remote Config has not been initialized! Make sure to call firebase.remoteconfig.init().");
+		return 0;
+	}
 	const char* key = luaL_checkstring(L, 1);
 	double value = FirebaseRemoteConfig_GetInstance()->GetDouble(key);
 	lua_pushnumber(L, value);
@@ -168,6 +200,11 @@ static int FirebaseRemoteConfig_GetNumber(lua_State* L) {
 
 static int FirebaseRemoteConfig_GetString(lua_State* L) {
 	DM_LUA_STACK_CHECK(L, 1);
+	if (!g_FirebaseRemoteConfig_Initialized)
+	{
+		dmLogWarning("Firebase Remote Config has not been initialized! Make sure to call firebase.remoteconfig.init().");
+		return 0;
+	}
 	const char* key = luaL_checkstring(L, 1);
 	const char* value = FirebaseRemoteConfig_GetInstance()->GetString(key).c_str();
 	lua_pushstring(L, value);
@@ -176,6 +213,11 @@ static int FirebaseRemoteConfig_GetString(lua_State* L) {
 
 static int FirebaseRemoteConfig_SetDefaults(lua_State* L) {
 	DM_LUA_STACK_CHECK(L, 0);
+	if (!g_FirebaseRemoteConfig_Initialized)
+	{
+		dmLogWarning("Firebase Remote Config has not been initialized! Make sure to call firebase.remoteconfig.init().");
+		return 0;
+	}
 
 	// populate this vector with default key value pairs
 	std::vector<remote_config::ConfigKeyValueVariant> defaultConfig = {};

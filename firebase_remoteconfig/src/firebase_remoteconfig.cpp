@@ -181,7 +181,10 @@ static int FirebaseRemoteConfig_GetData(lua_State* L) {
 	}
 	const char* key = luaL_checkstring(L, 1);
 	std::vector<unsigned char> value = FirebaseRemoteConfig_GetInstance()->GetData(key);
-	lua_pushstring(L, (char*)value.data());
+	unsigned char* v = new unsigned char[value.size()];
+	std::copy(value.begin(), value.end(), v);
+	lua_pushlstring(L, (char*)v, value.size());
+	delete [] v;
 	return 1;
 }
 
@@ -206,8 +209,9 @@ static int FirebaseRemoteConfig_GetString(lua_State* L) {
 		return 0;
 	}
 	const char* key = luaL_checkstring(L, 1);
-	const char* value = FirebaseRemoteConfig_GetInstance()->GetString(key).c_str();
-	lua_pushstring(L, value);
+
+	std::string value = FirebaseRemoteConfig_GetInstance()->GetString(key);
+	lua_pushstring(L, value.c_str());
 	return 1;
 }
 

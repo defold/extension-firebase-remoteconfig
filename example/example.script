@@ -19,6 +19,7 @@ local function set_defaults()
 		score_multiplier = 1,
 		holiday_theme = "Christmas",
 		holiday_promo_enabled = false,
+		story = "Once upon a time",
 	})
 end
 
@@ -27,6 +28,8 @@ local function print_values()
 	log("score_multiplier: ", remoteconfig.get_number("score_multiplier"))
 	log("holiday_theme: ", remoteconfig.get_string("holiday_theme"))
 	log("holiday_promo_enabled: ", remoteconfig.get_boolean("holiday_promo_enabled"))
+	log("story: ", remoteconfig.get_string("story"))
+	log("story (data): ", remoteconfig.get_data("story"))
 end
 
 function init(self)

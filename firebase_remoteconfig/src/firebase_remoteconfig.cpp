@@ -48,21 +48,23 @@ static void FirebaseRemoteConfig_ProcessEvents()
 		return;
 	}
 
-	DM_MUTEX_SCOPED_LOCK(g_FirebaseRemoteConfigEventsMutex);
+	dmArray<FirebaseRemoteConfigEvent> tmp;
+	{
+		DM_MUTEX_SCOPED_LOCK(g_FirebaseRemoteConfigEventsMutex);
+		tmp.Swap(g_FirebaseRemoteConfigEvents);
+	}
 
-	for(uint32_t i = 0; i != g_FirebaseRemoteConfigEvents.Size(); ++i)
+	for(uint32_t i = 0; i != tmp.Size(); ++i)
 	{
 		if (dmScript::SetupCallback(g_FirebaseRemoteConfigCallback))
 		{
 			lua_State* L = dmScript::GetCallbackLuaContext(g_FirebaseRemoteConfigCallback);
-			const FirebaseRemoteConfigEvent event = g_FirebaseRemoteConfigEvents[i];
+			const FirebaseRemoteConfigEvent event = tmp[i];
 			lua_pushnumber(L, event);
 			dmScript::PCall(L, 2, 0);
 			dmScript::TeardownCallback(g_FirebaseRemoteConfigCallback);
 		}
 	}
-
-	g_FirebaseRemoteConfigEvents.SetSize(0);
 }
 
 // get the remote config instance for this app

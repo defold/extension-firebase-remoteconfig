@@ -89,6 +89,15 @@
       type: table
       desc: Key-value pairs representing the default values. Generates CONFIG_DEFAULTS_SET or CONFIG_ERROR
 
+  - name: remoteconfig.set_minimum_fetch_interval
+    type: function
+    desc: Sets the minimum fetch interval. (Official docs https://firebase.google.com/docs/reference/cpp/struct/firebase/remote-config/config-settings)
+
+    parameters:
+    - name: minimum_fetch_interval
+      type: int
+      desc: The minimum interval in milliseconds between successive fetch calls. Generates SETTINGS_UPDATED or SETTINGS_ERROR
+
   - name: remoteconfig.CONFIG_INITIALIZED
     type: number
     desc: Event generated when remote config has been initialized and is ready for use
@@ -108,3 +117,11 @@
   - name: remoteconfig.CONFIG_ACTIVATED
     type: number
     desc: Event generated when the remote config has been activated
+
+  - name: remoteconfig.SETTINGS_UPDATED
+    type: number
+    desc: Event generated when remote config settings have been updated
+
+  - name: remoteconfig.SETTINGS_ERROR
+    type: number
+    desc: Event generated when an error occurred during updating settings

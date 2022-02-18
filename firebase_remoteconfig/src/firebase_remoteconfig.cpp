@@ -277,7 +277,7 @@ static int FirebaseRemoteConfig_SetDefaults(lua_State* L) {
 	return 0;
 }
 
-static void FirebaseRemoteConfig_SetMinimumFetchInterval(lua_State* L) {
+static int FirebaseRemoteConfig_SetMinimumFetchInterval(lua_State* L) {
 	DM_LUA_STACK_CHECK(L, 0);
 	if (!g_FirebaseRemoteConfig_Initialized)
 	{

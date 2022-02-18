@@ -9,4 +9,6 @@ enum FirebaseRemoteConfigEvent
     CONFIG_DEFAULTS_SET = 2,
     CONFIG_FETCHED = 3,
     CONFIG_ACTIVATED = 4,
+    SETTINGS_UPDATED = 5,
+    SETTINGS_ERROR = 6
 };

@@ -277,6 +277,31 @@ static int FirebaseRemoteConfig_SetDefaults(lua_State* L) {
 	return 0;
 }
 
+static int FirebaseRemoteConfig_SetMinimumFetchInterval(lua_State* L) {
+	DM_LUA_STACK_CHECK(L, 0);
+	if (!g_FirebaseRemoteConfig_Initialized)
+	{
+		dmLogWarning("Firebase Remote Config has not been initialized! Make sure to call firebase.remoteconfig.init().");
+		return 0;
+	}
+
+	ConfigSettings settings = FirebaseRemoteConfig_GetInstance()->GetConfigSettings();
+	settings.minimum_fetch_interval_in_milliseconds = luaL_checkint(L, 1);
+	
+	FirebaseRemoteConfig_GetInstance()->SetConfigSettings(settings)
+		.OnCompletion([](const ::firebase::Future<void>& completed_future) {
+		if (completed_future.error() == 0)
+		{
+			FirebaseRemoteConfig_QueueEvent(SETTINGS_UPDATED);
+		}
+		else
+		{
+			dmLogError("RemoteConfig %d %s", completed_future.error(), completed_future.error_message());
+			FirebaseRemoteConfig_QueueEvent(SETTINGS_ERROR);
+		}
+	});
+	return 0;
+}
 
 static void LuaInit(lua_State* L) {
 	DM_LUA_STACK_CHECK(L, 0);
@@ -296,6 +321,7 @@ static void LuaInit(lua_State* L) {
 	lua_newtable(L);
 	lua_pushtablestringfunction(L, "init", FirebaseRemoteConfig_Init);
 	lua_pushtablestringfunction(L, "set_defaults", FirebaseRemoteConfig_SetDefaults);
+	lua_pushtablestringfunction(L, "set_minimum_fetch_interval", FirebaseRemoteConfig_SetMinimumFetchInterval);
 	lua_pushtablestringfunction(L, "get_boolean", FirebaseRemoteConfig_GetBoolean);
 	lua_pushtablestringfunction(L, "get_data", FirebaseRemoteConfig_GetData);
 	lua_pushtablestringfunction(L, "get_number", FirebaseRemoteConfig_GetNumber);
@@ -310,6 +336,8 @@ static void LuaInit(lua_State* L) {
 	lua_setfieldstringnumber(L, "CONFIG_DEFAULTS_SET", CONFIG_DEFAULTS_SET);
 	lua_setfieldstringnumber(L, "CONFIG_FETCHED", CONFIG_FETCHED);
 	lua_setfieldstringnumber(L, "CONFIG_ACTIVATED", CONFIG_ACTIVATED);
+	lua_setfieldstringnumber(L, "SETTINGS_UPDATED", SETTINGS_UPDATED);
+	lua_setfieldstringnumber(L, "SETTINGS_ERROR", SETTINGS_ERROR);
 
 	lua_settable(L, -3);
 

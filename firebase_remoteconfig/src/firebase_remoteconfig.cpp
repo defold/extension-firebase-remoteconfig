@@ -217,6 +217,26 @@ static int FirebaseRemoteConfig_GetString(lua_State* L) {
 	return 1;
 }
 
+static int FirebaseRemoteConfig_GetKeys(lua_State* L) {
+	DM_LUA_STACK_CHECK(L, 1);
+	if (!g_FirebaseRemoteConfig_Initialized)
+	{
+		dmLogWarning("Firebase Remote Config has not been initialized! Make sure to call firebase.remoteconfig.init().");
+		return 0;
+	}
+	std::vector<std::string> keys = FirebaseRemoteConfig_GetInstance()->GetKeys();
+
+	lua_newtable(L);
+	int numKeys = keys.size();
+	for (int idx = 0; idx < numKeys; ++idx)
+	{
+		lua_pushstring(L, keys[idx].c_str());  
+		lua_rawseti(L, -2, idx + 1);
+	}
+
+	return 1;
+}
+
 static int FirebaseRemoteConfig_SetDefaults(lua_State* L) {
 	DM_LUA_STACK_CHECK(L, 0);
 	if (!g_FirebaseRemoteConfig_Initialized)
@@ -326,6 +346,7 @@ static void LuaInit(lua_State* L) {
 	lua_pushtablestringfunction(L, "get_data", FirebaseRemoteConfig_GetData);
 	lua_pushtablestringfunction(L, "get_number", FirebaseRemoteConfig_GetNumber);
 	lua_pushtablestringfunction(L, "get_string", FirebaseRemoteConfig_GetString);
+	lua_pushtablestringfunction(L, "get_keys", FirebaseRemoteConfig_GetKeys);
 
 	lua_pushtablestringfunction(L, "fetch", FirebaseRemoteConfig_Fetch);
 	lua_pushtablestringfunction(L, "activate", FirebaseRemoteConfig_Activate);

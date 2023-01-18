@@ -1,5 +1,8 @@
-framework module PromisesObjC {
-umbrella header "PromisesObjC-umbrella.h"
+framework module GoogleUtilities {
+umbrella header "GoogleUtilities-umbrella.h"
 export *
 module * { export * }
+  link framework "Security"
+  link framework "SystemConfiguration"
+  link "z"
 }

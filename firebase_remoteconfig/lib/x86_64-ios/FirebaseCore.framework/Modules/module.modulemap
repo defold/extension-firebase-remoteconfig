@@ -1,5 +1,5 @@
-framework module FirebaseCore {
-umbrella header "FirebaseCore.h"
+framework module FirebaseAnalytics {
+umbrella header "FirebaseAnalytics.h"
 export *
 module * { export * }
   link framework "CoreTelephony"
@@ -7,5 +7,7 @@ module * { export * }
   link framework "Security"
   link framework "SystemConfiguration"
   link framework "UIKit"
+  link "c++"
+  link "sqlite3"
   link "z"
 }

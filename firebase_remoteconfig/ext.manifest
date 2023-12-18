@@ -1,4 +1,4 @@
-name: "FirebaseRemoteConfig"
+name: "FirebaseRemoteConfigExt"
 
 platforms:
   android:

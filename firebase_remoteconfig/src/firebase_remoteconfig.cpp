@@ -134,7 +134,6 @@ static const luaL_reg Module_methods[] =
     {"get_data", Lua_GetData},
     {"get_number", Lua_GetNumber},
     {"get_string", Lua_GetString},
-    {"get_string", Lua_GetString},
     {"get_keys", Lua_GetKeys},
 
     {"fetch", Lua_Fetch},

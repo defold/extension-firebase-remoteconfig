@@ -26,23 +26,19 @@
           - name: message_id
             type: number
             desc: "One of message types:
-                `firebase.MSG_INITIALIZED`
-                `firebase.MSG_INSTALLATION_AUTH_TOKEN`
-                `firebase.MSG_INSTALLATION_ID`
-                `firebase.MSG_ERROR`"
+                `remoteconfig.MSG_INITIALIZED`
+                `remoteconfig.MSG_INSTALLATION_AUTH_TOKEN`
+                `remoteconfig.MSG_INSTALLATION_ID`
+                `remoteconfig.MSG_DEFAULTS_SET`
+                `remoteconfig.MSG_FETCHED`
+                `remoteconfig.MSG_ACTIVATED`
+                `remoteconfig.MSG_SETTINGS_UPDATED`
+                `remoteconfig.MSG_ERROR`"
 
           - name: message
             type: table
             desc: A table holding the data
             fields:
-                - name: token
-                  type: number
-                  desc: for MSG_INSTALLATION_AUTH_TOKEN
-
-                - name: id
-                  type: number
-                  desc: for MSG_INSTALLATION_ID
-
                 - name: error
                   type: string
                   optional: true
@@ -50,18 +46,23 @@
 
 #*****************************************************************************************************
 
-
   - name: remoteconfig.fetch
     type: function
     desc: Fetches config data from the server. Generates CONFIG_FETCHED or MSG_ERROR
+
+#*****************************************************************************************************
 
   - name: remoteconfig.activate
     type: function
     desc: Asynchronously activates the most recently fetched configs, so that the fetched key value pairs take effect. Generates CONFIG_ACTIVATED or MSG_ERROR
 
+#*****************************************************************************************************
+
   - name: remoteconfig.fetch_and_activate
     type: function
     desc: Asynchronously fetches and then activates the fetched configs. Generates CONFIG_FETCHED and CONFIG_ACTIVATED or MSG_ERROR
+
+#*****************************************************************************************************
 
   - name: remoteconfig.get_boolean
     type: function
@@ -77,6 +78,8 @@
       type: boolean
       desc: The value
 
+#*****************************************************************************************************
+
   - name: remoteconfig.get_data
     type: function
     desc: Returns the value associated with a key, as a vector of raw byte-data.
@@ -90,6 +93,8 @@
     - name: value
       type: string
       desc: The value
+
+#*****************************************************************************************************
 
   - name: remoteconfig.get_number
     type: function
@@ -105,6 +110,8 @@
       type: number
       desc: The value
 
+#*****************************************************************************************************
+
   - name: remoteconfig.get_string
     type: function
     desc: Returns the value associated with a key, converted to a string.
@@ -119,6 +126,8 @@
       type: string
       desc: The value
 
+#*****************************************************************************************************
+
   - name: remoteconfig.get_keys
     type: function
     desc: Gets the set of all keys.
@@ -127,6 +136,8 @@
     - name: keys
       type: table
       desc: An array of strings representing parameter keys
+
+#*****************************************************************************************************
 
   - name: remoteconfig.set_defaults
     type: function
@@ -137,6 +148,8 @@
       type: table
       desc: Key-value pairs representing the default values. Generates CONFIG_DEFAULTS_SET or MSG_ERROR
 
+#*****************************************************************************************************
+
   - name: remoteconfig.set_minimum_fetch_interval
     type: function
     desc: Sets the minimum fetch interval.
@@ -145,6 +158,8 @@
     - name: minimum_fetch_interval
       type: int
       desc: The minimum interval in milliseconds between successive fetch calls. Generates MSG_SETTINGS_UPDATED or MSG_ERROR
+
+#*****************************************************************************************************
 
   - name: remoteconfig.set_timeout
     type: function
@@ -155,30 +170,28 @@
       type: int
       desc: The timeout interval in milliseconds. Generates MSG_SETTINGS_UPDATED or MSG_ERROR
 
-  - name: remoteconfig.CONFIG_INITIALIZED
+#*****************************************************************************************************
+
+  - name: remoteconfig.MSG_INITIALIZED
     type: number
     desc: Event generated when remote config has been initialized and is ready for use
 
-  - name: remoteconfig.CONFIG_ERROR
+  - name: remoteconfig.MSG_ERROR
     type: number
     desc: Event generated when an error occurred.
 
-  - name: remoteconfig.CONFIG_DEFAULTS_SET
+  - name: remoteconfig.MSG_DEFAULTS_SET
     type: number
     desc: Event generated when the default values have been set
 
-  - name: remoteconfig.CONFIG_FETCHED
+  - name: remoteconfig.MSG_FETCHED
     type: number
     desc: Event generated when the remote config has been fetched
 
-  - name: remoteconfig.CONFIG_ACTIVATED
+  - name: remoteconfig.MSG_ACTIVATED
     type: number
     desc: Event generated when the remote config has been activated
 
   - name: remoteconfig.MSG_SETTINGS_UPDATED
     type: number
     desc: Event generated when remote config settings have been updated
-
-  - name: remoteconfig.SETTINGS_ERROR
-    type: number
-    desc: Event generated when an error occurred during updating settings

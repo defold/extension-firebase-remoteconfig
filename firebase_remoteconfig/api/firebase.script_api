@@ -5,7 +5,7 @@
   members:
   - name: remoteconfig.initialize
     type: function
-    desc: Initialise Firebase Remote Config. Generates CONFIG_INITIALIZE or MSG_ERROR
+    desc: Initialise Firebase Remote Config. Generates MSG_INITIALIZED or MSG_ERROR
 
 #*****************************************************************************************************
 
@@ -48,19 +48,19 @@
 
   - name: remoteconfig.fetch
     type: function
-    desc: Fetches config data from the server. Generates CONFIG_FETCHED or MSG_ERROR
+    desc: Fetches config data from the server. Generates MSG_FETCHED or MSG_ERROR
 
 #*****************************************************************************************************
 
   - name: remoteconfig.activate
     type: function
-    desc: Asynchronously activates the most recently fetched configs, so that the fetched key value pairs take effect. Generates CONFIG_ACTIVATED or MSG_ERROR
+    desc: Asynchronously activates the most recently fetched configs, so that the fetched key value pairs take effect. Generates MSG_ACTIVATED or MSG_ERROR
 
 #*****************************************************************************************************
 
   - name: remoteconfig.fetch_and_activate
     type: function
-    desc: Asynchronously fetches and then activates the fetched configs. Generates CONFIG_FETCHED and CONFIG_ACTIVATED or MSG_ERROR
+    desc: Asynchronously fetches and then activates the fetched configs. Generates MSG_FETCHED and MSG_ACTIVATED or MSG_ERROR
 
 #*****************************************************************************************************
 
@@ -146,7 +146,7 @@
     parameters:
     - name: defaults
       type: table
-      desc: Key-value pairs representing the default values. Generates CONFIG_DEFAULTS_SET or MSG_ERROR
+      desc: Key-value pairs representing the default values. Generates MSG_DEFAULTS_SET or MSG_ERROR
 
 #*****************************************************************************************************
 

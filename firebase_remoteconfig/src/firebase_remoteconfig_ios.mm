@@ -73,9 +73,21 @@ void Initialize()
     }
 }
 
-void SetDefaults() 
+void SetDefaults(const char* json) 
 {
-    //TODO
+    @try {
+        NSData *jsonData = [@(json) dataUsingEncoding:NSUTF8StringEncoding];
+        NSError *error;
+        NSDictionary *defaultValues = [NSJSONSerialization JSONObjectWithData:jsonData options:kNilOptions error:&error];
+        if (!defaultValues) {
+            AddToQueueCallback(MSG_ERROR, [[NSString stringWithFormat:@"{ \"error\": \"Unable to set default values (%1$@)\"}", [error code]] UTF8String]);
+            return;
+        }
+        [g_remoteConfig setDefaults:defaultValues];
+        SendSimpleMessage(MSG_DEFAULTS_SET);
+    } @catch (NSException* e) {
+        AddToQueueCallback(MSG_ERROR, [[NSString stringWithFormat:@"{ \"error\": \"Unable to set default values for Firebase Remote Config (%1$@)\"}", e.reason] UTF8String]);
+    }
 }
 
 void SetMinimumFetchInterval(double fetchInterval) 

@@ -1,2 +1,2 @@
-platform :ios, '10.0'
-pod 'FirebaseRemoteConfig', '8.13.0'
+platform :ios, '11.0'
+pod 'FirebaseRemoteConfig', '10.1.0' # Can't use newer version because of swift related version

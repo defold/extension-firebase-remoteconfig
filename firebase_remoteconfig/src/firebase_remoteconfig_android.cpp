@@ -26,6 +26,7 @@ namespace dmFirebaseRemoteConfig {
         jmethodID      m_GetNumber;
         jmethodID      m_GetData;
         jmethodID      m_GetString;
+        jmethodID      m_GetKeys;
         jmethodID      m_Fetch;
         jmethodID      m_Activate;
         jmethodID      m_FetchAndActivate;
@@ -91,6 +92,21 @@ namespace dmFirebaseRemoteConfig {
         return result_cstr_copy;
     }
 
+    static char* CallCharMethod(jobject instance, jmethodID method)
+    {
+        dmAndroid::ThreadAttacher threadAttacher;
+        JNIEnv* env = threadAttacher.GetEnv();
+
+        jstring return_value = (jstring)env->CallObjectMethod(instance, method);
+
+        const char* result_cstr = env->GetStringUTFChars(return_value, 0);
+        char* result_cstr_copy = strdup(result_cstr);
+        env->ReleaseStringUTFChars(return_value, result_cstr);
+        env->DeleteLocalRef(return_value);
+
+        return result_cstr_copy;
+    }
+
 
     static void InitJNIMethods(JNIEnv* env, jclass cls)
     {
@@ -103,6 +119,7 @@ namespace dmFirebaseRemoteConfig {
         g_firebaseRemoteConfig.m_GetNumber = env->GetMethodID(cls, "getNumber", "(Ljava/lang/String;)D");
         g_firebaseRemoteConfig.m_GetData = env->GetMethodID(cls, "getData", "(Ljava/lang/String;)Ljava/lang/String;");
         g_firebaseRemoteConfig.m_GetString = env->GetMethodID(cls, "getString", "(Ljava/lang/String;)Ljava/lang/String;");
+        g_firebaseRemoteConfig.m_GetKeys = env->GetMethodID(cls, "getKeys", "()Ljava/lang/String;");
         g_firebaseRemoteConfig.m_Fetch = env->GetMethodID(cls, "fetch", "()V");
         g_firebaseRemoteConfig.m_Activate = env->GetMethodID(cls, "activate", "()V");
         g_firebaseRemoteConfig.m_FetchAndActivate = env->GetMethodID(cls, "fetchAndActivate", "()V");
@@ -161,6 +178,11 @@ namespace dmFirebaseRemoteConfig {
     char * GetString(const char* key)
     {
         return CallCharMethodChar(g_firebaseRemoteConfig.m_JNI, g_firebaseRemoteConfig.m_GetString, key);
+    }
+
+    char * GetKeys()
+    {
+        return CallCharMethod(g_firebaseRemoteConfig.m_JNI, g_firebaseRemoteConfig.m_GetKeys);
     }
 
     void Fetch()

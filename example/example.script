@@ -3,78 +3,104 @@ local remoteconfig = firebase and firebase.remoteconfig
 local LOG_ENTRIES = {}
 
 local function log(...)
-	local text = ""
-	for _,v in ipairs({...}) do
-		text = text .. tostring(v)
-	end
-	table.insert(LOG_ENTRIES, 1, text)
-	table.remove(LOG_ENTRIES, 21)
-	print(text)
-	label.set_text("#label", table.concat(LOG_ENTRIES, "\n"))
+    local text = ""
+    for _,v in ipairs({...}) do
+        if type(v) == "table" then
+            local value = "table {"
+            for _, v1 in pairs(v) do
+                value = value..v1..","
+            end
+            if next(v) then
+                value = value:sub(1, -2)
+            else
+                value = value .. "empty table"
+            end
+            value = value .. "}"
+            v = value
+        end
+        text = text .. tostring(v)
+    end
+    table.insert(LOG_ENTRIES, 1, text)
+    table.remove(LOG_ENTRIES, 21)
+    print(text)
+    label.set_text("#label", table.concat(LOG_ENTRIES, "\n"))
 end
 
 local function set_defaults()
-	remoteconfig.set_defaults({
-		score_bonus = 0,
-		score_multiplier = 1,
-		holiday_theme = "Christmas",
-		holiday_promo_enabled = false,
-		story = "Once upon a time",
-	})
+    log("SET DEFAULTS")
+    remoteconfig.set_defaults({
+        score_bonus = 0,
+        score_multiplier = 1,
+        holiday_theme = "Christmas",
+        holiday_promo_enabled = false,
+        story = "Once upon a time",
+    })
 end
 
 local function print_values()
-	log("score_bonus: ", remoteconfig.get_number("score_bonus"))
-	log("score_multiplier: ", remoteconfig.get_number("score_multiplier"))
-	log("holiday_theme: ", remoteconfig.get_string("holiday_theme"))
-	log("holiday_promo_enabled: ", remoteconfig.get_boolean("holiday_promo_enabled"))
-	log("story: ", remoteconfig.get_string("story"))
-	log("story (data): ", remoteconfig.get_data("story"))
+    log("score_bonus: ", remoteconfig.get_number("score_bonus"))
+    log("score_multiplier: ", remoteconfig.get_number("score_multiplier"))
+    log("holiday_theme: ", remoteconfig.get_string("holiday_theme"))
+    log("holiday_promo_enabled: ", remoteconfig.get_boolean("holiday_promo_enabled"))
+    log("story: ", remoteconfig.get_string("story"))
+    log("story (data): ", remoteconfig.get_data("story"))
+end
+
+local function firebase_config_callback(self, message_id, message)
+    if message_id == remoteconfig.MSG_ERROR then
+        log("Firebase Remote Config error: ", message.error)
+        return
+    end
+    if message_id == remoteconfig.MSG_INITIALIZED then
+        log("Firebase Remote Config initialized")
+        set_defaults()
+    elseif message_id == remoteconfig.MSG_DEFAULTS_SET then
+        print_values()
+    elseif message_id == remoteconfig.MSG_FETCHED then
+        log("Fetched")
+        log("KEYS:", remoteconfig.get_keys())
+    elseif message_id == remoteconfig.MSG_ACTIVATED then
+        log("Activated")
+        print_values()
+    elseif message_id == remoteconfig.MSG_SETTINGS_UPDATED then
+        log("Settings updated")
+    else
+        log("Unknown event", message_id)
+    end
+end
+
+local function init_firebase_config()
+    log("Init Firebase Remote Config")
+    remoteconfig.set_callback(firebase_config_callback)
+    remoteconfig.initialize()
 end
 
 function init(self)
-	msg.post("@render:", "use_fixed_fit_projection")
-	go.animate("logo", "euler.z", go.PLAYBACK_LOOP_FORWARD, 360, go.EASING_LINEAR, 3)
+    msg.post("@render:", "use_fixed_fit_projection")
+    go.animate("logo", "euler.z", go.PLAYBACK_LOOP_FORWARD, 360, go.EASING_LINEAR, 3)
 
-	if not firebase then
-		log("Firebase not supported")
-		return
-	end
+    if not firebase then
+        log("Firebase not supported")
+        return
+    end
 
-	msg.post(".", "acquire_input_focus")
-	
-	log("Init Firebase")
-	log("Click to fetch and activate values")
-	local ok, err = firebase.init()
-	if not ok then
-		log(err)
-		return
-	end
+    msg.post(".", "acquire_input_focus")
+    
+    log("Init Firebase")
 
-	log("Init Firebase Remote Config")
-	remoteconfig.init(function(self, event)
-		if event == remoteconfig.CONFIG_ERROR then
-			log("Firebase Remote Config error")
-			return
-		end
-		if event == remoteconfig.CONFIG_INITIALIZED then
-			set_defaults()
-		elseif event == remoteconfig.CONFIG_DEFAULTS_SET then
-			print_values()
-		elseif event == remoteconfig.CONFIG_FETCHED then
-			log("Fetched")
-		elseif event == remoteconfig.CONFIG_ACTIVATED then
-			log("Activated")
-			print_values()
-		else
-			log("Unknown event", event)
-		end
-	end)
+    firebase.set_callback(function(self, message_id, message)
+        if message_id == firebase.MSG_INITIALIZED then
+            log("Firebase initialized")
+            init_firebase_config()
+        end
+    end)
+
+    firebase.initialize()
 end
 
 
 function on_input(self, action_id, action)
-	if action_id == hash("touch") and action.pressed then
-		remoteconfig.fetch_and_activate()
-	end
+    if action_id == hash("touch") and action.pressed then
+        remoteconfig.fetch_and_activate()
+    end
 end

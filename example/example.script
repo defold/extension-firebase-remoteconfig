@@ -55,6 +55,7 @@ local function firebase_config_callback(self, message_id, message)
         log("Firebase Remote Config initialized")
         set_defaults()
     elseif message_id == remoteconfig.MSG_DEFAULTS_SET then
+        log("MSG_DEFAULTS_SET")
         print_values()
     elseif message_id == remoteconfig.MSG_FETCHED then
         log("Fetched")

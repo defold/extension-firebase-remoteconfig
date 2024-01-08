@@ -15,7 +15,8 @@
 
 namespace dmFirebaseRemoteConfig {
 
-static int Lua_Initialize(lua_State* L) {
+static int Lua_Initialize(lua_State* L)
+{
     DM_LUA_STACK_CHECK(L, 0);
     Initialize();
     return 0;
@@ -32,7 +33,14 @@ static int Lua_SetCallback(lua_State* L)
 static int Lua_SetDefaults(lua_State* L)
 {
     DM_LUA_STACK_CHECK(L, 0);
-    // TODO
+    luaL_checktype(L, 1, LUA_TTABLE);
+    char* json = 0;
+    size_t json_length = 0;
+    if (dmScript::LuaToJson(L, &json, &json_length))
+    {
+        SetDefaults((const char*) json);
+        free(json);
+    }
     return 0;
 }
 

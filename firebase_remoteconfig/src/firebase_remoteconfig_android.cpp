@@ -62,6 +62,16 @@ namespace dmFirebaseRemoteConfig {
         return JNI_TRUE == return_value;
     }
 
+    static void CallVoidMethodChar(jobject instance, jmethodID method, const char* cstr)
+    {
+        dmAndroid::ThreadAttacher threadAttacher;
+        JNIEnv* env = threadAttacher.GetEnv();
+
+        jstring jstr = env->NewStringUTF(cstr);
+        env->CallVoidMethod(instance, method, jstr);
+        env->DeleteLocalRef(jstr);
+    }
+
     static double CallDoubleMethodChar(jobject instance, jmethodID method, const char* cstr)
     {
         dmAndroid::ThreadAttacher threadAttacher;
@@ -112,7 +122,7 @@ namespace dmFirebaseRemoteConfig {
     {
         g_firebaseRemoteConfig.m_Initialize = env->GetMethodID(cls, "initialize", "()V");
 
-        g_firebaseRemoteConfig.m_SetDefaults = env->GetMethodID(cls, "setDefaults", "()V");
+        g_firebaseRemoteConfig.m_SetDefaults = env->GetMethodID(cls, "setDefaults", "(Ljava/lang/String;)V");
         g_firebaseRemoteConfig.m_SetMinimumFetchInterval = env->GetMethodID(cls, "setMinimumFetchInterval", "(D)V");
         g_firebaseRemoteConfig.m_SetTimeout = env->GetMethodID(cls, "setTimeout", "(D)V");
         g_firebaseRemoteConfig.m_GetBoolean = env->GetMethodID(cls, "getBoolean", "(Ljava/lang/String;)Z");
@@ -145,9 +155,9 @@ namespace dmFirebaseRemoteConfig {
         CallVoidMethod(g_firebaseRemoteConfig.m_JNI, g_firebaseRemoteConfig.m_Initialize);
     }
 
-    void SetDefaults() 
+    void SetDefaults(const char* json) 
     {
-        CallVoidMethod(g_firebaseRemoteConfig.m_JNI, g_firebaseRemoteConfig.m_SetDefaults);
+        CallVoidMethodChar(g_firebaseRemoteConfig.m_JNI, g_firebaseRemoteConfig.m_SetDefaults, json);
     }
 
     void SetMinimumFetchInterval(double fetchInterval)

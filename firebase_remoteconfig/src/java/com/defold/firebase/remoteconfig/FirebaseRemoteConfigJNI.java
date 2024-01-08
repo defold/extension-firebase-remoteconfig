@@ -12,6 +12,10 @@ import org.json.JSONObject;
 import org.json.JSONArray;
 import org.json.JSONException;
 
+import java.util.Map;
+import java.util.HashMap;
+import java.util.Iterator;
+
 public class FirebaseRemoteConfigJNI {
     private static final String TAG = "FirebaseRemoteConfigJNI";
 
@@ -62,8 +66,30 @@ public class FirebaseRemoteConfigJNI {
         }
     }
 
-    public void setDefaults() {
-        // TODO: MSG_DEFAULTS_SET
+    public void setDefaults(String json) {
+        try {
+            JSONObject jsonObject = new JSONObject(json);
+            Iterator<String> keys = jsonObject.keys();
+            Map<String, Object> map = new HashMap<String, Object>();
+            while(keys.hasNext()) {
+                String key = keys.next();
+                Object value = jsonObject.get(key);
+                map.put(key, value);
+            }
+            this.firebaseRemoteConfig.setDefaultsAsync(map)
+            .addOnCompleteListener(new OnCompleteListener<Void>() {
+                @Override
+                public void onComplete(@NonNull Task<Void> task) {
+                    if (task.isSuccessful()) {
+                        sendSimpleMessage(MSG_DEFAULTS_SET);
+                    } else {
+                        sendErrorMessage("Remote Config. Unable to set defaults");
+                    }
+                }
+            });
+        } catch (Exception e) {
+            sendErrorMessage(e.getLocalizedMessage());
+        }
     }
 
     public void setMinimumFetchInterval(double fetchInterval) {

@@ -11,7 +11,7 @@ void Initialize_Ext();
 
 void Initialize();
 
-void SetDefaults();
+void SetDefaults(const char* json);
 
 void SetMinimumFetchInterval(double fetchInterval); // in seconds
 void SetTimeout(double timeOut); // in seconds

@@ -3,13 +3,13 @@
   desc: Functions and constants for interacting with Firebase Remote Config
 
   members:
-  - name: remoteconfig.initialize
+  - name: initialize
     type: function
     desc: Initialise Firebase Remote Config. Generates MSG_INITIALIZED or MSG_ERROR
 
 #*****************************************************************************************************
 
-  - name: remoteconfig.set_callback
+  - name: set_callback
     type: function
     desc: Sets a callback function for receiving events from the SDK. Call `firebase.set_callback(nil)`
           to remove callback
@@ -26,14 +26,14 @@
           - name: message_id
             type: number
             desc: "One of message types:
-                `remoteconfig.MSG_INITIALIZED`
-                `remoteconfig.MSG_INSTALLATION_AUTH_TOKEN`
-                `remoteconfig.MSG_INSTALLATION_ID`
-                `remoteconfig.MSG_DEFAULTS_SET`
-                `remoteconfig.MSG_FETCHED`
-                `remoteconfig.MSG_ACTIVATED`
-                `remoteconfig.MSG_SETTINGS_UPDATED`
-                `remoteconfig.MSG_ERROR`"
+                `firebase.remoteconfig.MSG_INITIALIZED`
+                `firebase.remoteconfig.MSG_INSTALLATION_AUTH_TOKEN`
+                `firebase.remoteconfig.MSG_INSTALLATION_ID`
+                `firebase.remoteconfig.MSG_DEFAULTS_SET`
+                `firebase.remoteconfig.MSG_FETCHED`
+                `firebase.remoteconfig.MSG_ACTIVATED`
+                `firebase.remoteconfig.MSG_SETTINGS_UPDATED`
+                `firebase.remoteconfig.MSG_ERROR`"
 
           - name: message
             type: table
@@ -46,25 +46,25 @@
 
 #*****************************************************************************************************
 
-  - name: remoteconfig.fetch
+  - name: fetch
     type: function
     desc: Fetches config data from the server. Generates MSG_FETCHED or MSG_ERROR
 
 #*****************************************************************************************************
 
-  - name: remoteconfig.activate
+  - name: activate
     type: function
     desc: Asynchronously activates the most recently fetched configs, so that the fetched key value pairs take effect. Generates MSG_ACTIVATED or MSG_ERROR
 
 #*****************************************************************************************************
 
-  - name: remoteconfig.fetch_and_activate
+  - name: fetch_and_activate
     type: function
     desc: Asynchronously fetches and then activates the fetched configs. Generates MSG_FETCHED and MSG_ACTIVATED or MSG_ERROR
 
 #*****************************************************************************************************
 
-  - name: remoteconfig.get_boolean
+  - name: get_boolean
     type: function
     desc: Returns the value associated with a key, converted to a bool.
 
@@ -80,7 +80,7 @@
 
 #*****************************************************************************************************
 
-  - name: remoteconfig.get_data
+  - name: get_data
     type: function
     desc: Returns the value associated with a key, as a vector of raw byte-data.
 
@@ -96,7 +96,7 @@
 
 #*****************************************************************************************************
 
-  - name: remoteconfig.get_number
+  - name: get_number
     type: function
     desc: Returns the value associated with a key, converted to a double.
 
@@ -112,7 +112,7 @@
 
 #*****************************************************************************************************
 
-  - name: remoteconfig.get_string
+  - name: get_string
     type: function
     desc: Returns the value associated with a key, converted to a string.
 
@@ -128,7 +128,7 @@
 
 #*****************************************************************************************************
 
-  - name: remoteconfig.get_keys
+  - name: get_keys
     type: function
     desc: Gets the set of all keys.
 
@@ -139,7 +139,7 @@
 
 #*****************************************************************************************************
 
-  - name: remoteconfig.set_defaults
+  - name: set_defaults
     type: function
     desc: Sets the default values.
 
@@ -150,7 +150,7 @@
 
 #*****************************************************************************************************
 
-  - name: remoteconfig.set_minimum_fetch_interval
+  - name: set_minimum_fetch_interval
     type: function
     desc: Sets the minimum fetch interval.
 
@@ -161,7 +161,7 @@
 
 #*****************************************************************************************************
 
-  - name: remoteconfig.set_timeout
+  - name: set_timeout
     type: function
     desc: Sets the timeout that specifies how long the client should wait for a connection to the Firebase Remote Config servers
 
@@ -172,26 +172,26 @@
 
 #*****************************************************************************************************
 
-  - name: remoteconfig.MSG_INITIALIZED
+  - name: MSG_INITIALIZED
     type: number
     desc: Event generated when remote config has been initialized and is ready for use
 
-  - name: remoteconfig.MSG_ERROR
+  - name: MSG_ERROR
     type: number
     desc: Event generated when an error occurred.
 
-  - name: remoteconfig.MSG_DEFAULTS_SET
+  - name: MSG_DEFAULTS_SET
     type: number
     desc: Event generated when the default values have been set
 
-  - name: remoteconfig.MSG_FETCHED
+  - name: MSG_FETCHED
     type: number
     desc: Event generated when the remote config has been fetched
 
-  - name: remoteconfig.MSG_ACTIVATED
+  - name: MSG_ACTIVATED
     type: number
     desc: Event generated when the remote config has been activated
 
-  - name: remoteconfig.MSG_SETTINGS_UPDATED
+  - name: MSG_SETTINGS_UPDATED
     type: number
     desc: Event generated when remote config settings have been updated

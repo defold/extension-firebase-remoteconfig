@@ -1,197 +1,201 @@
-- name: remoteconfig
+- name: firebase
   type: table
-  desc: Functions and constants for interacting with Firebase Remote Config
-
+  desc: Functions and constants for interacting with Firebase
   members:
-  - name: initialize
-    type: function
-    desc: Initialise Firebase Remote Config. Generates MSG_INITIALIZED or MSG_ERROR
+  - name: remoteconfig
+    type: table
+    desc: Functions and constants for interacting with Firebase Remote Config
 
-#*****************************************************************************************************
+    members:
+    - name: initialize
+      type: function
+      desc: Initialise Firebase Remote Config. Generates MSG_INITIALIZED or MSG_ERROR
 
-  - name: set_callback
-    type: function
-    desc: Sets a callback function for receiving events from the SDK. Call `firebase.set_callback(nil)`
-          to remove callback
-    parameters:
-      - name: callback
-        type: function
-        desc: Callback function that is executed on any event in the SDK.
+  #*****************************************************************************************************
 
-        parameters:
-          - name: self
-            type: object
-            desc: The calling script instance
+    - name: set_callback
+      type: function
+      desc: Sets a callback function for receiving events from the SDK. Call `firebase.set_callback(nil)`
+            to remove callback
+      parameters:
+        - name: callback
+          type: function
+          desc: Callback function that is executed on any event in the SDK.
 
-          - name: message_id
-            type: number
-            desc: "One of message types:
-                `firebase.remoteconfig.MSG_INITIALIZED`
-                `firebase.remoteconfig.MSG_INSTALLATION_AUTH_TOKEN`
-                `firebase.remoteconfig.MSG_INSTALLATION_ID`
-                `firebase.remoteconfig.MSG_DEFAULTS_SET`
-                `firebase.remoteconfig.MSG_FETCHED`
-                `firebase.remoteconfig.MSG_ACTIVATED`
-                `firebase.remoteconfig.MSG_SETTINGS_UPDATED`
-                `firebase.remoteconfig.MSG_ERROR`"
+          parameters:
+            - name: self
+              type: object
+              desc: The calling script instance
 
-          - name: message
-            type: table
-            desc: A table holding the data
-            fields:
-                - name: error
-                  type: string
-                  optional: true
-                  desc: The error message (if an error occurred or `nil` otherwise)
+            - name: message_id
+              type: number
+              desc: "One of message types:
+                  `firebase.remoteconfig.MSG_INITIALIZED`
+                  `firebase.remoteconfig.MSG_INSTALLATION_AUTH_TOKEN`
+                  `firebase.remoteconfig.MSG_INSTALLATION_ID`
+                  `firebase.remoteconfig.MSG_DEFAULTS_SET`
+                  `firebase.remoteconfig.MSG_FETCHED`
+                  `firebase.remoteconfig.MSG_ACTIVATED`
+                  `firebase.remoteconfig.MSG_SETTINGS_UPDATED`
+                  `firebase.remoteconfig.MSG_ERROR`"
 
-#*****************************************************************************************************
+            - name: message
+              type: table
+              desc: A table holding the data
+              fields:
+                  - name: error
+                    type: string
+                    optional: true
+                    desc: The error message (if an error occurred or `nil` otherwise)
 
-  - name: fetch
-    type: function
-    desc: Fetches config data from the server. Generates MSG_FETCHED or MSG_ERROR
+  #*****************************************************************************************************
 
-#*****************************************************************************************************
+    - name: fetch
+      type: function
+      desc: Fetches config data from the server. Generates MSG_FETCHED or MSG_ERROR
 
-  - name: activate
-    type: function
-    desc: Asynchronously activates the most recently fetched configs, so that the fetched key value pairs take effect. Generates MSG_ACTIVATED or MSG_ERROR
+  #*****************************************************************************************************
 
-#*****************************************************************************************************
+    - name: activate
+      type: function
+      desc: Asynchronously activates the most recently fetched configs, so that the fetched key value pairs take effect. Generates MSG_ACTIVATED or MSG_ERROR
 
-  - name: fetch_and_activate
-    type: function
-    desc: Asynchronously fetches and then activates the fetched configs. Generates MSG_FETCHED and MSG_ACTIVATED or MSG_ERROR
+  #*****************************************************************************************************
 
-#*****************************************************************************************************
+    - name: fetch_and_activate
+      type: function
+      desc: Asynchronously fetches and then activates the fetched configs. Generates MSG_FETCHED and MSG_ACTIVATED or MSG_ERROR
 
-  - name: get_boolean
-    type: function
-    desc: Returns the value associated with a key, converted to a bool.
+  #*****************************************************************************************************
 
-    parameters:
-    - name: key
-      type: string
-      desc: Key of the value to be retrieved
+    - name: get_boolean
+      type: function
+      desc: Returns the value associated with a key, converted to a bool.
 
-    return:
-    - name: value
-      type: boolean
-      desc: The value
+      parameters:
+      - name: key
+        type: string
+        desc: Key of the value to be retrieved
 
-#*****************************************************************************************************
+      return:
+      - name: value
+        type: boolean
+        desc: The value
 
-  - name: get_data
-    type: function
-    desc: Returns the value associated with a key, as a vector of raw byte-data.
+  #*****************************************************************************************************
 
-    parameters:
-    - name: key
-      type: string
-      desc: Key of the value to be retrieved
+    - name: get_data
+      type: function
+      desc: Returns the value associated with a key, as a vector of raw byte-data.
 
-    return:
-    - name: value
-      type: string
-      desc: The value
+      parameters:
+      - name: key
+        type: string
+        desc: Key of the value to be retrieved
 
-#*****************************************************************************************************
+      return:
+      - name: value
+        type: string
+        desc: The value
 
-  - name: get_number
-    type: function
-    desc: Returns the value associated with a key, converted to a double.
+  #*****************************************************************************************************
 
-    parameters:
-    - name: key
-      type: string
-      desc: Key of the value to be retrieved
+    - name: get_number
+      type: function
+      desc: Returns the value associated with a key, converted to a double.
 
-    return:
-    - name: value
+      parameters:
+      - name: key
+        type: string
+        desc: Key of the value to be retrieved
+
+      return:
+      - name: value
+        type: number
+        desc: The value
+
+  #*****************************************************************************************************
+
+    - name: get_string
+      type: function
+      desc: Returns the value associated with a key, converted to a string.
+
+      parameters:
+      - name: key
+        type: string
+        desc: Key of the value to be retrieved
+
+      return:
+      - name: value
+        type: string
+        desc: The value
+
+  #*****************************************************************************************************
+
+    - name: get_keys
+      type: function
+      desc: Gets the set of all keys.
+
+      return:
+      - name: keys
+        type: table
+        desc: An array of strings representing parameter keys
+
+  #*****************************************************************************************************
+
+    - name: set_defaults
+      type: function
+      desc: Sets the default values.
+
+      parameters:
+      - name: defaults
+        type: table
+        desc: Key-value pairs representing the default values. Generates MSG_DEFAULTS_SET or MSG_ERROR
+
+  #*****************************************************************************************************
+
+    - name: set_minimum_fetch_interval
+      type: function
+      desc: Sets the minimum fetch interval.
+
+      parameters:
+      - name: minimum_fetch_interval
+        type: int
+        desc: The minimum interval in milliseconds between successive fetch calls. Generates MSG_SETTINGS_UPDATED or MSG_ERROR
+
+  #*****************************************************************************************************
+
+    - name: set_timeout
+      type: function
+      desc: Sets the timeout that specifies how long the client should wait for a connection to the Firebase Remote Config servers
+
+      parameters:
+      - name: minimum_fetch_interval
+        type: int
+        desc: The timeout interval in milliseconds. Generates MSG_SETTINGS_UPDATED or MSG_ERROR
+
+  #*****************************************************************************************************
+
+    - name: MSG_INITIALIZED
       type: number
-      desc: The value
+      desc: Event generated when remote config has been initialized and is ready for use
 
-#*****************************************************************************************************
+    - name: MSG_ERROR
+      type: number
+      desc: Event generated when an error occurred.
 
-  - name: get_string
-    type: function
-    desc: Returns the value associated with a key, converted to a string.
+    - name: MSG_DEFAULTS_SET
+      type: number
+      desc: Event generated when the default values have been set
 
-    parameters:
-    - name: key
-      type: string
-      desc: Key of the value to be retrieved
+    - name: MSG_FETCHED
+      type: number
+      desc: Event generated when the remote config has been fetched
 
-    return:
-    - name: value
-      type: string
-      desc: The value
+    - name: MSG_ACTIVATED
+      type: number
+      desc: Event generated when the remote config has been activated
 
-#*****************************************************************************************************
-
-  - name: get_keys
-    type: function
-    desc: Gets the set of all keys.
-
-    return:
-    - name: keys
-      type: table
-      desc: An array of strings representing parameter keys
-
-#*****************************************************************************************************
-
-  - name: set_defaults
-    type: function
-    desc: Sets the default values.
-
-    parameters:
-    - name: defaults
-      type: table
-      desc: Key-value pairs representing the default values. Generates MSG_DEFAULTS_SET or MSG_ERROR
-
-#*****************************************************************************************************
-
-  - name: set_minimum_fetch_interval
-    type: function
-    desc: Sets the minimum fetch interval.
-
-    parameters:
-    - name: minimum_fetch_interval
-      type: int
-      desc: The minimum interval in milliseconds between successive fetch calls. Generates MSG_SETTINGS_UPDATED or MSG_ERROR
-
-#*****************************************************************************************************
-
-  - name: set_timeout
-    type: function
-    desc: Sets the timeout that specifies how long the client should wait for a connection to the Firebase Remote Config servers
-
-    parameters:
-    - name: minimum_fetch_interval
-      type: int
-      desc: The timeout interval in milliseconds. Generates MSG_SETTINGS_UPDATED or MSG_ERROR
-
-#*****************************************************************************************************
-
-  - name: MSG_INITIALIZED
-    type: number
-    desc: Event generated when remote config has been initialized and is ready for use
-
-  - name: MSG_ERROR
-    type: number
-    desc: Event generated when an error occurred.
-
-  - name: MSG_DEFAULTS_SET
-    type: number
-    desc: Event generated when the default values have been set
-
-  - name: MSG_FETCHED
-    type: number
-    desc: Event generated when the remote config has been fetched
-
-  - name: MSG_ACTIVATED
-    type: number
-    desc: Event generated when the remote config has been activated
-
-  - name: MSG_SETTINGS_UPDATED
-    type: number
-    desc: Event generated when remote config settings have been updated
+    - name: MSG_SETTINGS_UPDATED
+      type: number
+      desc: Event generated when remote config settings have been updated

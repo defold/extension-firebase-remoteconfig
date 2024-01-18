@@ -71,6 +71,7 @@ function init(self)
             firebase.remoteconfig.initialize()
         end
     end)
+     firebase.initialize()
 end
 ```
 

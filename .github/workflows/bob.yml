@@ -4,13 +4,13 @@ on: [push, pull_request]
 
 env:
   VERSION_FILENAME: 'info.json'
-  BUILD_SERVER: 'https://build.defold.com'
+  BUILD_SERVER: 'https://build-stage.defold.com'
 
 jobs:
   build_with_bob:
     strategy:
       matrix:
-        platform: [armv7-android, x86_64-linux, x86_64-win32, x86-win32, js-web]
+        platform: [arm64-android, x86_64-linux, x86_64-win32, x86-win32, wasm-web]
     runs-on: ubuntu-latest
 
     name: Build

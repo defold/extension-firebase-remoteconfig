@@ -9,13 +9,13 @@
     members:
     - name: initialize
       type: function
-      desc: Initialise Firebase Remote Config. Generates MSG_INITIALIZED or MSG_ERROR
+      desc: Initializes Firebase Remote Config. Generates MSG_INITIALIZED or MSG_ERROR
 
   #*****************************************************************************************************
 
     - name: set_callback
       type: function
-      desc: Sets a callback function for receiving events from the SDK. Call `firebase.set_callback(nil)`
+      desc: Sets a callback function for receiving events from the SDK. Call `firebase.remoteconfig.set_callback(nil)`
             to remove callback
       parameters:
         - name: callback
@@ -30,14 +30,12 @@
             - name: message_id
               type: number
               desc: "One of message types:
+                  `firebase.remoteconfig.MSG_ERROR`
                   `firebase.remoteconfig.MSG_INITIALIZED`
-                  `firebase.remoteconfig.MSG_INSTALLATION_AUTH_TOKEN`
-                  `firebase.remoteconfig.MSG_INSTALLATION_ID`
                   `firebase.remoteconfig.MSG_DEFAULTS_SET`
-                  `firebase.remoteconfig.MSG_FETCHED`
-                  `firebase.remoteconfig.MSG_ACTIVATED`
                   `firebase.remoteconfig.MSG_SETTINGS_UPDATED`
-                  `firebase.remoteconfig.MSG_ERROR`"
+                  `firebase.remoteconfig.MSG_FETCHED`
+                  `firebase.remoteconfig.MSG_ACTIVATED`"
 
             - name: message
               type: table
@@ -145,34 +143,34 @@
 
     - name: set_defaults
       type: function
-      desc: Sets the default values.
+      desc: Sets the default values. Generates MSG_DEFAULTS_SET or MSG_ERROR
 
       parameters:
       - name: defaults
         type: table
-        desc: Key-value pairs representing the default values. Generates MSG_DEFAULTS_SET or MSG_ERROR
+        desc: Key-value pairs representing the default values
 
   #*****************************************************************************************************
 
     - name: set_minimum_fetch_interval
       type: function
-      desc: Sets the minimum fetch interval.
+      desc: Sets the minimum fetch interval. Generates MSG_SETTINGS_UPDATED or MSG_ERROR
 
       parameters:
       - name: minimum_fetch_interval
-        type: int
-        desc: The minimum interval in milliseconds between successive fetch calls. Generates MSG_SETTINGS_UPDATED or MSG_ERROR
+        type: number
+        desc: The minimum interval in seconds between successive fetch calls
 
   #*****************************************************************************************************
 
     - name: set_timeout
       type: function
-      desc: Sets the timeout that specifies how long the client should wait for a connection to the Firebase Remote Config servers
+      desc: Sets the timeout that specifies how long the client should wait for a connection to the Firebase Remote Config servers. Generates MSG_SETTINGS_UPDATED or MSG_ERROR
 
       parameters:
-      - name: minimum_fetch_interval
-        type: int
-        desc: The timeout interval in milliseconds. Generates MSG_SETTINGS_UPDATED or MSG_ERROR
+      - name: timeout
+        type: number
+        desc: The timeout interval in seconds
 
   #*****************************************************************************************************
 

@@ -25,8 +25,9 @@ char * GetKeys(); // free() need to be called after data is pushed into lua
 void Fetch();
 void Activate();
 void FetchAndActivate();
+void AddUpdateListener();
+void RemoveUpdateListener();
 
 } //namespace dmFirebaseRemoteConfig
 
 #endif
-

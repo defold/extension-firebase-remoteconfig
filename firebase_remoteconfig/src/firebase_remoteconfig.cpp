@@ -129,6 +129,20 @@ static int Lua_FetchAndActivate(lua_State* L)
     return 0;
 }
 
+static int Lua_AddUpdateListener(lua_State* L)
+{
+    DM_LUA_STACK_CHECK(L, 0);
+    AddUpdateListener();
+    return 0;
+}
+
+static int Lua_RemoveUpdateListener(lua_State* L)
+{
+    DM_LUA_STACK_CHECK(L, 0);
+    RemoveUpdateListener();
+    return 0;
+}
+
 static const luaL_reg Module_methods[] =
 {
     {"initialize", Lua_Initialize},
@@ -147,6 +161,8 @@ static const luaL_reg Module_methods[] =
     {"fetch", Lua_Fetch},
     {"activate", Lua_Activate},
     {"fetch_and_activate", Lua_FetchAndActivate},
+    {"add_update_listener", Lua_AddUpdateListener},
+    {"remove_update_listener", Lua_RemoveUpdateListener},
     {0, 0}
 };
 
@@ -180,6 +196,7 @@ static void LuaInit(lua_State* L) {
     SETCONSTANT(MSG_SETTINGS_UPDATED)
     SETCONSTANT(MSG_FETCHED)
     SETCONSTANT(MSG_ACTIVATED)
+    SETCONSTANT(MSG_CONFIG_UPDATED)
 
     #undef SETCONSTANT
 
@@ -210,6 +227,7 @@ dmExtension::Result AppFinalizeFirebaseExtension(dmExtension::AppParams* params)
 }
 
 dmExtension::Result FinalizeFirebaseExtension(dmExtension::Params* params) {
+    RemoveUpdateListener();
     FinalizeCallback();
     return dmExtension::RESULT_OK;
 }
@@ -241,4 +259,3 @@ static dmExtension::Result FinalizeFirebase(dmExtension::Params* params)
 DM_DECLARE_EXTENSION(EXTENSION_NAME, LIB_NAME, 0, 0, InitializeFirebase, 0, 0, FinalizeFirebase)
 
 #endif // defined(DM_PLATFORM_ANDROID) || defined(DM_PLATFORM_IOS) 
-

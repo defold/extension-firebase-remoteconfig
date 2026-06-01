@@ -5,13 +5,20 @@ import android.util.Log;
 
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.firebase.remoteconfig.ConfigUpdate;
+import com.google.firebase.remoteconfig.ConfigUpdateListener;
+import com.google.firebase.remoteconfig.ConfigUpdateListenerRegistration;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
+import com.google.firebase.remoteconfig.FirebaseRemoteConfigException;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings;
 
 import org.json.JSONObject;
 import org.json.JSONArray;
 import org.json.JSONException;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -30,6 +37,7 @@ public class FirebaseRemoteConfigJNI {
     private static final int MSG_SETTINGS_UPDATED   = 3;
     private static final int MSG_FETCHED            = 4;
     private static final int MSG_ACTIVATED          = 5;
+    private static final int MSG_CONFIG_UPDATED     = 6;
 
     private static final long kDefaultCacheExpirationInSeconds = 60 * 60 * 12;
     private static final long kDefaultTimeoutInSeconds = 30;
@@ -37,6 +45,7 @@ public class FirebaseRemoteConfigJNI {
 
     private FirebaseRemoteConfig firebaseRemoteConfig;
     private FirebaseRemoteConfigSettings.Builder configSettingsBuilder;
+    private ConfigUpdateListenerRegistration configUpdateListenerRegistration;
 
     public FirebaseRemoteConfigJNI() {
 
@@ -189,6 +198,45 @@ public class FirebaseRemoteConfigJNI {
         });
     }
 
+    public void addUpdateListener() {
+        try {
+            removeUpdateListener();
+            this.configUpdateListenerRegistration = firebaseRemoteConfig.addOnConfigUpdateListener(new ConfigUpdateListener() {
+                @Override
+                public void onUpdate(@NonNull ConfigUpdate configUpdate) {
+                    sendConfigUpdatedMessage(configUpdate);
+                }
+
+                @Override
+                public void onError(@NonNull FirebaseRemoteConfigException error) {
+                    sendErrorMessage(error);
+                }
+            });
+        } catch (Exception e) {
+            sendErrorMessage(e.getLocalizedMessage());
+        }
+    }
+
+    public void removeUpdateListener() {
+        if (this.configUpdateListenerRegistration != null) {
+            this.configUpdateListenerRegistration.remove();
+            this.configUpdateListenerRegistration = null;
+        }
+    }
+
+    private void sendConfigUpdatedMessage(ConfigUpdate configUpdate) {
+        try {
+            List<String> updatedKeys = new ArrayList<String>(configUpdate.getUpdatedKeys());
+            Collections.sort(updatedKeys);
+
+            JSONObject obj = new JSONObject();
+            obj.put("updated_keys", new JSONArray(updatedKeys));
+            firebaseAddToQueue(MSG_CONFIG_UPDATED, obj.toString());
+        } catch (JSONException e) {
+            sendErrorMessage(e.getLocalizedMessage());
+        }
+    }
+
     private String getJsonConversionErrorMessage(String errorText) {
         String message = null;
         
@@ -204,10 +252,31 @@ public class FirebaseRemoteConfigJNI {
     }
 
     private void sendErrorMessage(String errorText) {
+        if (errorText == null) {
+            errorText = "Unknown Firebase Remote Config error";
+        }
         String message = getJsonConversionErrorMessage(errorText);
         Log.d(TAG, "Remote Config Error");
         Log.d(TAG, message);
         firebaseAddToQueue(MSG_ERROR, message);
+    }
+
+    private void sendErrorMessage(FirebaseRemoteConfigException error) {
+        try {
+            String errorText = error.getLocalizedMessage();
+            if (errorText == null) {
+                errorText = "Unknown Firebase Remote Config error";
+            }
+
+            JSONObject obj = new JSONObject();
+            obj.put("error", errorText);
+            if (error.getCode() != null) {
+                obj.put("code", error.getCode().toString());
+            }
+            firebaseAddToQueue(MSG_ERROR, obj.toString());
+        } catch (JSONException e) {
+            sendErrorMessage(e.getLocalizedMessage());
+        }
     }
 
     private void sendSimpleMessage(int msg) {

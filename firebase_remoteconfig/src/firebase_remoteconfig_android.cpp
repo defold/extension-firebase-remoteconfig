@@ -30,6 +30,8 @@ namespace dmFirebaseRemoteConfig {
         jmethodID      m_Fetch;
         jmethodID      m_Activate;
         jmethodID      m_FetchAndActivate;
+        jmethodID      m_AddUpdateListener;
+        jmethodID      m_RemoveUpdateListener;
     };
 
     static FirebaseRemoteConfigJNI g_firebaseRemoteConfig;
@@ -133,6 +135,8 @@ namespace dmFirebaseRemoteConfig {
         g_firebaseRemoteConfig.m_Fetch = env->GetMethodID(cls, "fetch", "()V");
         g_firebaseRemoteConfig.m_Activate = env->GetMethodID(cls, "activate", "()V");
         g_firebaseRemoteConfig.m_FetchAndActivate = env->GetMethodID(cls, "fetchAndActivate", "()V");
+        g_firebaseRemoteConfig.m_AddUpdateListener = env->GetMethodID(cls, "addUpdateListener", "()V");
+        g_firebaseRemoteConfig.m_RemoveUpdateListener = env->GetMethodID(cls, "removeUpdateListener", "()V");
     }
 
     void Initialize_Ext() 
@@ -208,6 +212,16 @@ namespace dmFirebaseRemoteConfig {
     void FetchAndActivate()
     {
         CallVoidMethod(g_firebaseRemoteConfig.m_JNI, g_firebaseRemoteConfig.m_FetchAndActivate);        
+    }
+
+    void AddUpdateListener()
+    {
+        CallVoidMethod(g_firebaseRemoteConfig.m_JNI, g_firebaseRemoteConfig.m_AddUpdateListener);
+    }
+
+    void RemoveUpdateListener()
+    {
+        CallVoidMethod(g_firebaseRemoteConfig.m_JNI, g_firebaseRemoteConfig.m_RemoveUpdateListener);
     }
 
 } //namespace dmAdmob

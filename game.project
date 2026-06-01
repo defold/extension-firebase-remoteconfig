@@ -2,9 +2,8 @@
 title = extension-firebase-remoteconfig
 custom_resources = 
 bundle_resources = /bundle
-dependencies#0 = https://github.com/britzl/gooey/archive/6.5.0.zip
-dependencies#1 = https://github.com/britzl/monarch/archive/2.13.0.zip
-dependencies#2 = https://github.com/defold/extension-firebase/archive/refs/heads/master.zip
+dependencies#0 = https://github.com/britzl/monarch/archive/refs/tags/6.0.1.zip
+dependencies#1 = https://github.com/defold/extension-firebase/archive/refs/heads/master.zip
 
 [bootstrap]
 main_collection = /example/example.collectionc
@@ -15,6 +14,7 @@ game_binding = /input/game.input_bindingc
 [display]
 width = 640
 height = 1136
+dynamic_orientation = 1
 
 [script]
 shared_state = 1

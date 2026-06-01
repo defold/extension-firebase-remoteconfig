@@ -1,6 +1,8 @@
 local remoteconfig = firebase and firebase.remoteconfig
 
 local LOG_ENTRIES = {}
+local realtime_listener_started = false
+local pending_updated_keys = nil
 
 local function log(...)
     local text = ""
@@ -46,6 +48,17 @@ local function print_values()
     log("story (data): ", remoteconfig.get_data("story"))
 end
 
+local function print_updated_values(updated_keys)
+    if not updated_keys or #updated_keys == 0 then
+        log("Updated values: empty table")
+        return
+    end
+
+    for _, key in ipairs(updated_keys) do
+        log("Updated value: ", key, " = ", remoteconfig.get_string(key))
+    end
+end
+
 local function firebase_config_callback(self, message_id, message)
     if message_id == remoteconfig.MSG_ERROR then
         log("Firebase Remote Config error: ", message.error)
@@ -63,6 +76,19 @@ local function firebase_config_callback(self, message_id, message)
     elseif message_id == remoteconfig.MSG_ACTIVATED then
         log("Activated")
         print_values()
+        if pending_updated_keys then
+            print_updated_values(pending_updated_keys)
+            pending_updated_keys = nil
+        end
+        if not realtime_listener_started then
+            realtime_listener_started = true
+            remoteconfig.add_update_listener()
+            log("Real-time update listener started")
+        end
+    elseif message_id == remoteconfig.MSG_CONFIG_UPDATED then
+        log("Config updated")
+        pending_updated_keys = message.updated_keys
+        remoteconfig.activate()
     elseif message_id == remoteconfig.MSG_SETTINGS_UPDATED then
         log("Settings updated")
     else

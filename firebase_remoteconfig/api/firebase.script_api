@@ -35,7 +35,8 @@
                   `firebase.remoteconfig.MSG_DEFAULTS_SET`
                   `firebase.remoteconfig.MSG_SETTINGS_UPDATED`
                   `firebase.remoteconfig.MSG_FETCHED`
-                  `firebase.remoteconfig.MSG_ACTIVATED`"
+                  `firebase.remoteconfig.MSG_ACTIVATED`
+                  `firebase.remoteconfig.MSG_CONFIG_UPDATED`"
 
             - name: message
               type: table
@@ -45,6 +46,10 @@
                     type: string
                     optional: true
                     desc: The error message (if an error occurred or `nil` otherwise)
+                  - name: updated_keys
+                    type: table
+                    optional: true
+                    desc: An array of strings representing the updated parameter keys for `MSG_CONFIG_UPDATED`
 
   #*****************************************************************************************************
 
@@ -63,6 +68,19 @@
     - name: fetch_and_activate
       type: function
       desc: Asynchronously fetches and then activates the fetched configs. Generates MSG_FETCHED and MSG_ACTIVATED or MSG_ERROR
+
+  #*****************************************************************************************************
+
+    - name: add_update_listener
+      type: function
+      desc: Starts listening for real-time config updates from Remote Config. Generates MSG_CONFIG_UPDATED or MSG_ERROR.
+            Real-time updates automatically fetch new values but do not activate them; call `activate()` when the updated values should take effect.
+
+  #*****************************************************************************************************
+
+    - name: remove_update_listener
+      type: function
+      desc: Stops the active real-time config update listener.
 
   #*****************************************************************************************************
 
@@ -197,3 +215,8 @@
     - name: MSG_SETTINGS_UPDATED
       type: number
       desc: Event generated when remote config settings have been updated
+
+    - name: MSG_CONFIG_UPDATED
+      type: number
+      desc: Event generated when real-time Remote Config has automatically fetched updated values.
+            The message table contains `updated_keys`.

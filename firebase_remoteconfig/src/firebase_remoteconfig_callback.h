@@ -13,6 +13,7 @@ enum Message
     MSG_SETTINGS_UPDATED    = 3,
     MSG_FETCHED             = 4,
     MSG_ACTIVATED           = 5,
+    MSG_CONFIG_UPDATED      = 6,
 };
 
 struct CallbackData

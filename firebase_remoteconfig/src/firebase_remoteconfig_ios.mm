@@ -36,11 +36,16 @@ void SendSimpleMessage(Message msg, id obj) {
     }
 }
 
-void SendErrorMessage(NSError *error) 
+void SendErrorMessage(NSString *errorText)
 {
     NSMutableDictionary *dict = [NSMutableDictionary dictionary];
-    [dict setObject:error.localizedDescription forKey:@"error"];
+    [dict setObject:errorText ?: @"Unknown Firebase Remote Config error" forKey:@"error"];
     SendSimpleMessage(MSG_ERROR, dict);
+}
+
+void SendErrorMessage(NSError *error)
+{
+    SendErrorMessage(error ? error.localizedDescription : @"Unknown Firebase Remote Config error");
 }
 
 void SendSimpleMessage(Message msg) 
@@ -50,6 +55,7 @@ void SendSimpleMessage(Message msg)
 }
 
 FIRRemoteConfig *g_remoteConfig = 0;
+FIRConfigUpdateListenerRegistration *g_configUpdateListenerRegistration = 0;
 
 void Initialize_Ext()
 {
@@ -205,6 +211,40 @@ void FetchAndActivate()
         }];
     } @catch (NSException* e) {
         AddToQueueCallback(MSG_ERROR, [[NSString stringWithFormat:@"{ \"error\": \"Unable to fetch and activate Remote Config (%1$@)\"}", e.reason] UTF8String]);
+    }
+}
+
+void AddUpdateListener()
+{
+    @try {
+        RemoveUpdateListener();
+        g_configUpdateListenerRegistration = [[g_remoteConfig addOnConfigUpdateListener:^(FIRRemoteConfigUpdate * _Nullable configUpdate, NSError * _Nullable error) {
+            if (error != nil) {
+                SendErrorMessage(error);
+                return;
+            }
+
+            if (configUpdate == nil) {
+                SendErrorMessage(@"Remote Config update received without config data");
+                return;
+            }
+
+            NSArray *updatedKeys = [[configUpdate.updatedKeys allObjects] sortedArrayUsingSelector:@selector(localizedCaseInsensitiveCompare:)];
+            NSMutableDictionary *dict = [NSMutableDictionary dictionary];
+            [dict setObject:updatedKeys forKey:@"updated_keys"];
+            SendSimpleMessage(MSG_CONFIG_UPDATED, dict);
+        }] retain];
+    } @catch (NSException* e) {
+        AddToQueueCallback(MSG_ERROR, [[NSString stringWithFormat:@"{ \"error\": \"Unable to add Remote Config update listener (%1$@)\"}", e.reason] UTF8String]);
+    }
+}
+
+void RemoveUpdateListener()
+{
+    if (g_configUpdateListenerRegistration) {
+        [g_configUpdateListenerRegistration remove];
+        [g_configUpdateListenerRegistration release];
+        g_configUpdateListenerRegistration = 0;
     }
 }
 

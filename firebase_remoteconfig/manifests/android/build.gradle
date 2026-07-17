@@ -3,5 +3,6 @@ repositories {
 }
 
 dependencies {
-    implementation 'com.google.firebase:firebase-config:21.6.0'
+    implementation platform('com.google.firebase:firebase-bom:34.16.0')
+    implementation 'com.google.firebase:firebase-config'
 }

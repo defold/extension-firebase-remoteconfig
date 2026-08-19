@@ -1,0 +1,2 @@
+# Loaded by native Firebase Remote Config code through JNI.
+-keep,allowoptimization class com.defold.firebase.remoteconfig.** { *; }
